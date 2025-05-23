@@ -5,7 +5,7 @@ import os
 from aiogram import Bot, Dispatcher, types
 from dotenv import load_dotenv
 
-from bot.handlers import router
+from .handlers import router
 
 load_dotenv()
 BOT_TOKEN = os.getenv('BOT_TOKEN')
