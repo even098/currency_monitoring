@@ -32,3 +32,12 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f'{self.user.telegram_id} -> {self.currency.base_currency_code}'
+
+
+class AvailableCurrency(models.Model):
+    code = models.CharField(max_length=3)
+    name = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.code}, {self.name}'

@@ -23,9 +23,8 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(os.path.join(BASE_DIR, '..'))
 sys.path.append(os.path.join(BASE_DIR, '..', 'bot'))
-sys.path.append(os.path.join(BASE_DIR, '..', 'backend'))
 
-ENV_PATH = os.path.join(BASE_DIR, '..', '.env')
+ENV_PATH = os.path.join(BASE_DIR, '.env')
 load_dotenv(ENV_PATH)
 
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -50,7 +49,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'currency.apps.CurrencyConfig',
     'django_celery_beat',
-    'backend'
 ]
 
 MIDDLEWARE = [

@@ -1,11 +1,14 @@
 import asyncio
 import logging
-from aiogram import Bot, Dispatcher, types
-from aiogram.types import Message
-from aiogram.filters import Command, CommandStart
+import os
 
-from backend.currency_monitoring.settings import BOT_TOKEN
+from aiogram import Bot, Dispatcher, types
+from dotenv import load_dotenv
+
 from bot.handlers import router
+
+load_dotenv()
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 
 async def main():

@@ -9,7 +9,7 @@ import requests
 
 from .models import User, Currency
 
-from backend.currency_monitoring.settings import API_KEY, BASE_URL
+from currency_monitoring.settings import API_KEY, BASE_URL
 
 from .models import Subscription
 from .serializers import CurrencySerializer
@@ -20,8 +20,7 @@ class RegisterUserAPIView(APIView):
         try:
             telegram_id = request.data.get('telegram_id')
             notify_time = request.data.get('notify_time')
-            print(notify_time)
-            user = User.objects.create(telegram_id=telegram_id, notify_time=notify_time)
+            user = User.objects.get_or_create(telegram_id=telegram_id, notify_time=notify_time)
 
             return Response(
                 data={
@@ -32,7 +31,6 @@ class RegisterUserAPIView(APIView):
                 status=status.HTTP_201_CREATED
             )
         except Exception as e:
-            print(e)
             return Response(data={'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -53,13 +51,25 @@ class SubscribeToCurrencyAPIView(APIView):
         data = request.data
         telegram_id = data.get('telegram_id')
         user = get_object_or_404(User, telegram_id=telegram_id)
-        base_currency_code = data.get('base_currency_code'),
+        base_currency_code = data.get('base_currency_code')
         target_currency_code = data.get('target_currency_code')
 
-        currency, created = Currency.objects.get_or_create(
-            base_currency_code=base_currency_code,
-            target_currency_code=target_currency_code
-        )
+        try:
+            currency = Currency.objects.get(
+                base_currency_code=base_currency_code,
+                target_currency_code=target_currency_code
+            )
+        except Currency.DoesNotExist:
+            url = f'{BASE_URL}/{API_KEY}/latest/{base_currency_code}'
+            response = requests.get(url)
+            currency_data = response.json()
+            rate = currency_data.get('conversion_rates').get(target_currency_code)
+
+            currency = Currency.objects.create(
+                base_currency_code=base_currency_code,
+                target_currency_code=target_currency_code,
+                rate=rate
+            )
 
         subscription, created = Subscription.objects.get_or_create(
             user=user,
@@ -72,15 +82,15 @@ class SubscribeToCurrencyAPIView(APIView):
         return Response(data={'detail': 'Subscription already exists.'}, status=status.HTTP_409_CONFLICT)
 
 
-class SubcriptionsAPIView(APIView):
-    def get(self, request):
+class SubscriptionsAPIView(APIView):
+    def post(self, request):
         telegram_id = request.data.get('telegram_id')
         user = get_object_or_404(User, telegram_id=telegram_id)
         subscriptions = user.subscriptions.all()
         currencies = Currency.objects.filter(subscriptions__in=subscriptions)
         serialized_currencies_data = CurrencySerializer(currencies, many=True).data
 
-        return Response(data={'currencies': serialized_currencies_data}, status=status.HTTP_200_OK)
+        return Response(data={'subscriptions': serialized_currencies_data}, status=status.HTTP_200_OK)
 
 
 class CurrencyRatesUpdateAPIView(APIView):
@@ -111,3 +121,38 @@ class CurrencyRatesUpdateAPIView(APIView):
                 data={'detail': 'An error occured', 'error': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+class ChangeNotificationTimeAPIView(APIView):
+    def post(self, request):
+        try:
+            telegram_id = request.data.get('telegram_id')
+            notify_time = request.data.get('notify_time')
+
+            user = User.objects.filter(telegram_id=telegram_id).update(notify_time=notify_time)
+
+            return Response(
+                data={
+                    'detail': 'Updated successfully!',
+                    'telegram_id': telegram_id,
+                    'notify_time': notify_time
+                },
+                status=status.HTTP_200_OK
+            )
+
+        except Exception as e:
+            return Response(data={'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteSubscriptionAPIView(APIView):
+    def post(self, request):
+        telegram_id = request.data.get('telegram_id')
+        base_currency_code = request.data.get('base_currency_code')
+        target_currency_code = request.data.get('target_currency_code')
+        print(telegram_id, base_currency_code, target_currency_code)
+        user = get_object_or_404(User, telegram_id=telegram_id)
+        currency = get_object_or_404(Currency, base_currency_code=base_currency_code, target_currency_code=target_currency_code)
+        subscription = get_object_or_404(Subscription, user=user, currency=currency)
+        subscription.delete()
+
+        return Response(data={'detail': 'Deleted'}, status=status.HTTP_204_NO_CONTENT)
