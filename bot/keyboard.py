@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from .services import get_subscriptions
+from services import get_subscriptions
 
 
 async def get_actions_markup():

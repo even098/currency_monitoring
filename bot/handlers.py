@@ -7,8 +7,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery
 
-from .keyboard import get_actions_markup, get_back_markup, get_subscriptions_markup
-from .services import register_user, check_currency, subscribe_to_currency, get_currency, get_subscriptions, \
+from keyboard import get_actions_markup, get_back_markup, get_subscriptions_markup
+from services import register_user, check_currency, subscribe_to_currency, get_currency, get_subscriptions, \
     change_notification_time, delete_subscription
 
 router = Router()
