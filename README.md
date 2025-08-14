@@ -32,29 +32,33 @@
 
 ### 1. Клонировать репозиторий
 ```bash
-git clone https://github.com/username/currency_monitoring.git
+git clone https://github.com/even098/currency_monitoring.git
 cd currency_monitoring
 ```
 
 ### 2. Создать `.env` файл
 ```env
-POSTGRES_DB=currency_db
-POSTGRES_USER=currency_user
-POSTGRES_PASSWORD=currency_pass
-POSTGRES_HOST=postgres
-POSTGRES_PORT=5432
+SECRET_KEY=django_secret_key
+API_URL='http://backend:8000/api'  # если работа через docker
 
-DJANGO_SECRET_KEY=your_secret_key
-DEBUG=True
-ALLOWED_HOSTS=*
+BASE_URL=https://v6.exchangerate-api.com/v6
+API_KEY=exchange_rates_api_key
 
-TELEGRAM_BOT_TOKEN=your_tg_bot_token
-CURRENCY_API_KEY=your_api_key
+BOT_TOKEN=telegram_bot_token
+
+DB_NAME=currency_app_database
+DB_USER=postgres
+DB_PASSWORD=0910
+DB_HOST=postgres
+DB_PORT=5432
+
+CELERY_BROKER_URL='redis://redis:6379/0'  # при работе через docker
+CELERY_RESULT_BACKEND='redis://redis:6379/1'  # при работе через docker
 ```
 
 ### 3. Запуск в Docker
 ```bash
-docker-compose up --build
+docker-compose up --build -d
 ```
 
 ---
