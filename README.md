@@ -1,6 +1,6 @@
 # Currency Monitoring
 
-Проект для отслеживания курса валют с автоматической рассылкой в Telegram.  
+Проект для отслеживания курса валют с автоматической рассылкой в Telegram. Доступен по [ссылке](https://t.me/exchange_rates_notifications_bot)
 Бэкенд реализован на **Django Rest Framework**, фронтенд — Telegram-бот.  
 Под капотом: **PostgreSQL**, **Docker**, **Celery**, **Celery Beat**, интеграция с внешними API для получения курсов валют.
 
