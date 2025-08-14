@@ -26,16 +26,25 @@ class RegisterUserAPIView(APIView):
         try:
             telegram_id = request.data.get('telegram_id')
             notify_time = request.data.get('notify_time')
-            user = User.objects.get_or_create(telegram_id=telegram_id)
-
-            return Response(
-                data={
-                    'detail': 'Registered successfully!',
-                    'telegram_id': telegram_id,
-                    'notify_time': notify_time
-                },
-                status=status.HTTP_201_CREATED
-            )
+            user, created = User.objects.get_or_create(telegram_id=telegram_id, defaults={'notify_time': notify_time})
+            if created:
+                return Response(
+                    data={
+                        'detail': 'Registered successfully!',
+                        'telegram_id': telegram_id,
+                        'notify_time': notify_time
+                    },
+                    status=status.HTTP_201_CREATED
+                )
+            else:
+                return Response(
+                    data={
+                        'detail': 'Already exists!',
+                        'telegram_id': telegram_id,
+                        'notify_time': notify_time
+                    },
+                    status=status.HTTP_200_OK
+                )
         except Exception as e:
             print(e)
             return Response(data={'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
