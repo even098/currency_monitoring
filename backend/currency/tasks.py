@@ -1,6 +1,7 @@
 import asyncio
 import socket
 from datetime import datetime
+import os
 
 import requests
 from aiogram import Bot
@@ -10,7 +11,7 @@ from django.utils.timezone import now
 from currency.models import Subscription, AvailableCurrency, User
 from currency_monitoring.settings import BOT_TOKEN
 
-API_URL = f'http://127.0.0.1:8000/api'
+API_URL = os.getenv('API_URL')
 bot = Bot(token=BOT_TOKEN)
 
 

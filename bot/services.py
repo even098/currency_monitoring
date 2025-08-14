@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-API_URL = 'http://127.0.0.1:8000/api'
+API_URL = os.getenv('API_URL')
 BASE_URL = os.getenv('BASE_URL')
 API_KEY = os.getenv('API_KEY')
 
@@ -87,19 +87,22 @@ async def get_currency(base_currency_code: str, target_currency_code: str):
 
 
 async def get_subscriptions(telegram_id: int):
+    print(API_URL)
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.post(
+            response = await client.get(
                 url=f'{API_URL}/subscriptions/',
                 timeout=10.0,
-                data={'telegram_id': f'{telegram_id}'}
+                params={'telegram_id': f'{telegram_id}'}
             )
             data = response.json()
             response.raise_for_status()
+            print(data.get('subscriptions'))
             subscriptions = data.get('subscriptions', [])
 
             return subscriptions
         except Exception as e:
+            print(e)
             return f'Error: {e}'
 
 

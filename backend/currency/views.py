@@ -1,3 +1,5 @@
+import os
+
 from django.utils.timezone import now
 
 from django.shortcuts import get_object_or_404
@@ -9,10 +11,14 @@ import requests
 
 from .models import User, Currency
 
-from currency_monitoring.settings import API_KEY, BASE_URL
+# from currency_monitoring.settings import API_KEY, BASE_URL
 
 from .models import Subscription
 from .serializers import CurrencySerializer
+
+
+API_KEY = os.getenv('API_KEY')
+BASE_URL = os.getenv('BASE_URL')
 
 
 class RegisterUserAPIView(APIView):
@@ -20,7 +26,7 @@ class RegisterUserAPIView(APIView):
         try:
             telegram_id = request.data.get('telegram_id')
             notify_time = request.data.get('notify_time')
-            user = User.objects.get_or_create(telegram_id=telegram_id, notify_time=notify_time)
+            user = User.objects.get_or_create(telegram_id=telegram_id)
 
             return Response(
                 data={
@@ -31,6 +37,7 @@ class RegisterUserAPIView(APIView):
                 status=status.HTTP_201_CREATED
             )
         except Exception as e:
+            print(e)
             return Response(data={'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -83,8 +90,8 @@ class SubscribeToCurrencyAPIView(APIView):
 
 
 class SubscriptionsAPIView(APIView):
-    def post(self, request):
-        telegram_id = request.data.get('telegram_id')
+    def get(self, request):
+        telegram_id = request.GET.get('telegram_id')
         user = get_object_or_404(User, telegram_id=telegram_id)
         subscriptions = user.subscriptions.all()
         currencies = Currency.objects.filter(subscriptions__in=subscriptions)

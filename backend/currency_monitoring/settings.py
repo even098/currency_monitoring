@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(os.path.join(BASE_DIR, '..'))
 sys.path.append(os.path.join(BASE_DIR, '..', 'bot'))
 
-ENV_PATH = os.path.join(BASE_DIR, '.env')
+ENV_PATH = os.path.join(BASE_DIR, '../.env')
 load_dotenv(ENV_PATH)
 
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -35,7 +35,7 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
