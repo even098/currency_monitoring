@@ -46,9 +46,9 @@ API_KEY=exchange_rates_api_key
 
 BOT_TOKEN=telegram_bot_token
 
-DB_NAME=currency_app_database
-DB_USER=postgres
-DB_PASSWORD=0910
+DB_NAME=db_name
+DB_USER=db_user
+DB_PASSWORD=password
 DB_HOST=postgres
 DB_PORT=5432
 
