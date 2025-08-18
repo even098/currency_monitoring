@@ -51,13 +51,13 @@ def send_notifications():
     return task_message
 
 
-@shared_task
-def update_available_currencies():
-    response = requests.get(f'{API_URL}/currencies/').json()
-    supported_codes = response['supported_codes']
-
-    for supported_code in supported_codes:
-        code, name = supported_code.split(',')
-        AvailableCurrency.objects.get_or_create(code=code, name=name)
-
-    return 'available currencies updated'
+# @shared_task
+# def update_available_currencies():
+#     response = requests.get(f'{API_URL}/currencies/').json()
+#     supported_codes = response['supported_codes']
+#
+#     for supported_code in supported_codes:
+#         code, name = supported_code.split(',')
+#         AvailableCurrency.objects.get_or_create(code=code, name=name)
+#
+#     return 'available currencies updated'
